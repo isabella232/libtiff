@@ -108,6 +108,8 @@ int TIFFReInitJPEG_12( TIFF *tif, int scheme, int is_encode );
 #  define JPEG_LIB_MK1_OR_12BIT 1
 #elif BITS_IN_JSAMPLE == 12
 #  define JPEG_LIB_MK1_OR_12BIT 1
+#else
+#  define JPEG_LIB_MK1_OR_12BIT 0
 #endif
 
 /*
