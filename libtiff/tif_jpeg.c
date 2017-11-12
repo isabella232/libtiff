@@ -95,10 +95,6 @@ int TIFFReInitJPEG_12( TIFF *tif, int scheme, int is_encode );
 #include "jpeglib.h"
 #include "jerror.h"
 
-#ifndef HAVE_WXJPEG_BOOLEAN
-   typedef boolean wxjpeg_boolean;
-#endif
-
 /* 
  * Do we want to do special processing suitable for when JSAMPLE is a
  * 16bit value?  
@@ -298,20 +294,20 @@ TIFFjpeg_set_colorspace(JPEGState* sp, J_COLOR_SPACE colorspace)
 }
 
 static int
-TIFFjpeg_set_quality(JPEGState* sp, int quality, wxjpeg_boolean force_baseline)
+TIFFjpeg_set_quality(JPEGState* sp, int quality, boolean force_baseline)
 {
 	return CALLVJPEG(sp,
 	    jpeg_set_quality(&sp->cinfo.c, quality, force_baseline));
 }
 
 static int
-TIFFjpeg_suppress_tables(JPEGState* sp, wxjpeg_boolean suppress)
+TIFFjpeg_suppress_tables(JPEGState* sp, boolean suppress)
 {
 	return CALLVJPEG(sp, jpeg_suppress_tables(&sp->cinfo.c, suppress));
 }
 
 static int
-TIFFjpeg_start_compress(JPEGState* sp, wxjpeg_boolean write_all_tables)
+TIFFjpeg_start_compress(JPEGState* sp, boolean write_all_tables)
 {
 	return CALLVJPEG(sp,
 	    jpeg_start_compress(&sp->cinfo.c, write_all_tables));
@@ -344,7 +340,7 @@ TIFFjpeg_write_tables(JPEGState* sp)
 }
 
 static int
-TIFFjpeg_read_header(JPEGState* sp, wxjpeg_boolean require_image)
+TIFFjpeg_read_header(JPEGState* sp, boolean require_image)
 {
 	return CALLJPEG(sp, -1, jpeg_read_header(&sp->cinfo.d, require_image));
 }
@@ -412,7 +408,7 @@ std_init_destination(j_compress_ptr cinfo)
 	sp->dest.free_in_buffer = (size_t) tif->tif_rawdatasize;
 }
 
-static wxjpeg_boolean
+static boolean
 std_empty_output_buffer(j_compress_ptr cinfo)
 {
 	JPEGState* sp = (JPEGState*) cinfo;
@@ -476,7 +472,7 @@ tables_init_destination(j_compress_ptr cinfo)
 	sp->dest.free_in_buffer = (size_t) sp->jpegtables_length;
 }
 
-static wxjpeg_boolean
+static boolean
 tables_empty_output_buffer(j_compress_ptr cinfo)
 {
 	JPEGState* sp = (JPEGState*) cinfo;
@@ -542,7 +538,7 @@ std_init_source(j_decompress_ptr cinfo)
 	sp->src.bytes_in_buffer = (size_t) tif->tif_rawcc;
 }
 
-static wxjpeg_boolean
+static boolean
 std_fill_input_buffer(j_decompress_ptr cinfo)
 {
 	JPEGState* sp = (JPEGState* ) cinfo;
