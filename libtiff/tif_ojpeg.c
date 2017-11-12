@@ -217,10 +217,6 @@ static const TIFFField ojpegFields[] = {
 #include "jpeglib.h"
 #include "jerror.h"
 
-#ifndef HAVE_WXJPEG_BOOLEAN
-   typedef boolean wxjpeg_boolean;
-#endif
-
 typedef struct jpeg_error_mgr jpeg_error_mgr;
 typedef struct jpeg_common_struct jpeg_common_struct;
 typedef struct jpeg_decompress_struct jpeg_decompress_struct;
@@ -415,9 +411,9 @@ static void jpeg_encap_unwind(TIFF* tif);
 static void OJPEGLibjpegJpegErrorMgrOutputMessage(jpeg_common_struct* cinfo);
 static void OJPEGLibjpegJpegErrorMgrErrorExit(jpeg_common_struct* cinfo);
 static void OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo);
-static wxjpeg_boolean OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
+static boolean OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo);
 static void OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_bytes);
-static wxjpeg_boolean OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
+static boolean OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired);
 static void OJPEGLibjpegJpegSourceMgrTermSource(jpeg_decompress_struct* cinfo);
 
 int
@@ -2506,7 +2502,7 @@ OJPEGLibjpegJpegSourceMgrInitSource(jpeg_decompress_struct* cinfo)
 	(void)cinfo;
 }
 
-static wxjpeg_boolean
+static boolean
 OJPEGLibjpegJpegSourceMgrFillInputBuffer(jpeg_decompress_struct* cinfo)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
@@ -2536,7 +2532,7 @@ OJPEGLibjpegJpegSourceMgrSkipInputData(jpeg_decompress_struct* cinfo, long num_b
 #pragma warning( push )
 #pragma warning( disable : 4702 ) /* unreachable code */
 #endif
-static wxjpeg_boolean
+static boolean
 OJPEGLibjpegJpegSourceMgrResyncToRestart(jpeg_decompress_struct* cinfo, int desired)
 {
 	TIFF* tif=(TIFF*)cinfo->client_data;
