@@ -201,7 +201,8 @@
 /* Support LogLuv high dynamic range encoding */
 #undef LOGLUV_SUPPORT
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #undef LT_OBJDIR
 
 /* Support LZMA2 compression */
