@@ -68,6 +68,8 @@ extern int getopt(int, char**, char*);
 
 #define PS_UNIT_SIZE	72.0F
 
+#define TIFF_DIR_MAX    65534
+
 /* This type is of PDF color spaces. */
 typedef enum {
 	T2P_CS_BILEVEL = 0x01,	/* Bilevel, black and white */
@@ -1051,6 +1053,14 @@ void t2p_read_tiff_init(T2P* t2p, TIFF* input){
 	uint16* tiff_transferfunction[3];
 
 	directorycount=TIFFNumberOfDirectories(input);
+	if(directorycount > TIFF_DIR_MAX) {
+		TIFFError(
+			TIFF2PDF_MODULE,
+			"TIFF contains too many directories, %s",
+			TIFFFileName(input));
+		t2p->t2p_error = T2P_ERR_ERROR;
+		return;
+	}
 	t2p->tiff_pages = (T2P_PAGE*) _TIFFmalloc(TIFFSafeMultiply(tmsize_t,directorycount,sizeof(T2P_PAGE)));
 	if(t2p->tiff_pages==NULL){
 		TIFFError(
@@ -3736,12 +3746,13 @@ tsize_t
 t2p_sample_rgbaa_to_rgb(tdata_t data, uint32 samplecount)
 {
 	uint32 i;
-	
-    /* For the 3 first samples, there is overlapping between souce and
-       destination, so use memmove().
-       See http://bugzilla.maptools.org/show_bug.cgi?id=2577 */
-    for(i = 0; i < 3 && i < samplecount; i++)
-        memmove((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
+
+	/* For the 3 first samples, there is overlap between source and
+	 * destination, so use memmove().
+	 * See http://bugzilla.maptools.org/show_bug.cgi?id=2577
+	 */
+	for(i = 0; i < 3 && i < samplecount; i++)
+		memmove((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
 	for(; i < samplecount; i++)
 		memcpy((uint8*)data + i * 3, (uint8*)data + i * 4, 3);
 
@@ -4240,13 +4251,13 @@ void t2p_pdf_currenttime(T2P* t2p)
 
 	currenttime = localtime(&timenow);
 	snprintf(t2p->pdf_datetime, sizeof(t2p->pdf_datetime),
-		 "D:%.4d%.2d%.2d%.2d%.2d%.2d",
-		 (currenttime->tm_year + 1900) % 65536,
-		 (currenttime->tm_mon + 1) % 256,
-		 (currenttime->tm_mday) % 256,
-		 (currenttime->tm_hour) % 256,
-		 (currenttime->tm_min) % 256,
-		 (currenttime->tm_sec) % 256);
+		 "D:%.4u%.2u%.2u%.2u%.2u%.2u",
+		 TIFFmin((unsigned) currenttime->tm_year + 1900U,9999U),
+		 TIFFmin((unsigned) currenttime->tm_mon + 1U,12U),   /* 0-11 + 1 */
+		 TIFFmin((unsigned) currenttime->tm_mday,31U),       /* 1-31 */
+		 TIFFmin((unsigned) currenttime->tm_hour,23U),       /* 0-23 */
+		 TIFFmin((unsigned) currenttime->tm_min,59U),        /* 0-59 */
+		 TIFFmin((unsigned) (currenttime->tm_sec),60U));     /* 0-60 */
 
 	return;
 }
