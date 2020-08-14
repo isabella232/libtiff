@@ -3,7 +3,7 @@
     hardcoded definitions for MSVC, Xcode and MinGW when using makefiles.
  */
 
-#ifdef __APPLE__
+#ifndef _WIN32
 
 /* Define to 1 if you have the <assert.h> header file. */
 #define HAVE_ASSERT_H 1
@@ -330,7 +330,7 @@
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
 
-#else /* __APPLE__ */
+#else /* _WIN32 */
 
 /* Define to 1 if you have the <assert.h> header file. */
 #define HAVE_ASSERT_H 1
